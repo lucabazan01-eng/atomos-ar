@@ -1,0 +1,15 @@
+PROTOTIPO H, Fe, Au
+1) Netlify: entra a tu sitio > Deploys y arrastra esta carpeta (la que contiene index.html) para actualizarlo. La URL no cambia.
+2) Imprime markers/*.png (marcador de 4 a 5 cm, sin recortar el borde negro ni el margen blanco) y pegalos en objetos.
+3) En el celular abre TU-URL/lector.html, permite la camara y apunta al marcador.
+4) python make_qr.py TU-URL/  crea qr/lector.png (un QR que abre el lector) y los QR por elemento.
+Para los 118 elementos: python generar.py todos
+
+VISTA DESPLEGADA (contable): izquierda el núcleo (protones rojos y neutrones celestes en filas de 10, en bloques de 5); derecha una casilla por subnivel (fila = nivel 1,2,3..., columna = s,p,d,f) con un punto azul por electrón.
+Modo clase: agrega ?quiz=1 a la dirección de lector.html para ocultar los números y que los cuenten.
+Tamaño: ?s=NUMERO (por defecto cada elemento se ajusta solo).
+
+MODELO ACTUAL: núcleo en el centro (racimo de protones rojos y neutrones celestes); cada subnivel es un cascarón esférico hueco muy translúcido (s rojo, p amarillo, d verde, f morado) con sus electrones (puntos azules);
+cada nivel de energía termina en un borde (tres anillos de color). No hay carteles. El texto de abajo está oculto; se muestra con ?info=1 (y ?info=1&quiz=1 oculta las cantidades).
+
+FORMAS: s esfera; p dos partes con cintura (célula dividiéndose); d cuatro partes (trébol); f ocho partes (esquinas de un cubo). Cada nivel termina en dos anillos de borde.
