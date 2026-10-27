@@ -1,0 +1,96 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Lector de átomos</title>
+<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/aframe/build/aframe-ar.js"></script>
+<style>body{margin:0;overflow:hidden;background:#000;font-family:system-ui,sans-serif}
+#info{position:fixed;left:0;right:0;bottom:0;padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));background:rgba(5,7,13,.8);color:#fff;text-align:center;z-index:10;font-size:18px}
+#info small{display:block;color:#aab;font-size:12.5px;margin-top:4px}</style></head>
+<body><div id="info"><b id="t">Apunta la cámara a un marcador</b><small id="s">Si el video se ve con mucho zoom, prueba agregar ?c=1 o ?c=2 a la dirección</small></div>
+<script>
+window.addEventListener("error",e=>{window.__err=(e.message||"")+" "+String(e.filename||"").split("/").pop()});
+{const c=new URLSearchParams(location.search).get("c")||"3",p=innerWidth<innerHeight;
+const b="sourceType:webcam;debugUIEnabled:false;detectionMode:mono;patternRatio:0.5;trackingMethod:best;";
+const A={"1":b+"sourceWidth:"+(p?720:1280)+";sourceHeight:"+(p?1280:720)+";displayWidth:"+innerWidth+";displayHeight:"+innerHeight,"2":b+"sourceWidth:1280;sourceHeight:960;displayWidth:1280;displayHeight:960","3":b,"4":b+"sourceWidth:1280;sourceHeight:720","5":b+"sourceWidth:"+(p?480:640)+";sourceHeight:"+(p?640:480),"6":b+"sourceWidth:"+(p?480:640)+";sourceHeight:"+(p?640:480)+";cameraParametersUrl:"+(p?"camera_p.dat":"camera_l.dat")};
+document.write("<a-scene "+(c>="3"?"":"embedded ")+'vr-mode-ui="enabled:false" renderer="logarithmicDepthBuffer:true;alpha:true;antialias:true" arjs="'+(A[c]||A["3"])+'">')}
+</script>
+<a-marker id="m1" type="pattern" url="patt/1.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w1"><a-entity gltf-model="glb/1.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m2" type="pattern" url="patt/2.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w2"><a-entity gltf-model="glb/2.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m3" type="pattern" url="patt/3.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w3"><a-entity gltf-model="glb/3.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m4" type="pattern" url="patt/4.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w4"><a-entity gltf-model="glb/4.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m5" type="pattern" url="patt/5.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w5"><a-entity gltf-model="glb/5.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m6" type="pattern" url="patt/6.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w6"><a-entity gltf-model="glb/6.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m7" type="pattern" url="patt/7.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w7"><a-entity gltf-model="glb/7.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m8" type="pattern" url="patt/8.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w8"><a-entity gltf-model="glb/8.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m9" type="pattern" url="patt/9.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w9"><a-entity gltf-model="glb/9.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m10" type="pattern" url="patt/10.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w10"><a-entity gltf-model="glb/10.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m11" type="pattern" url="patt/11.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w11"><a-entity gltf-model="glb/11.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m12" type="pattern" url="patt/12.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w12"><a-entity gltf-model="glb/12.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m13" type="pattern" url="patt/13.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w13"><a-entity gltf-model="glb/13.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m14" type="pattern" url="patt/14.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w14"><a-entity gltf-model="glb/14.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m15" type="pattern" url="patt/15.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w15"><a-entity gltf-model="glb/15.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m16" type="pattern" url="patt/16.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w16"><a-entity gltf-model="glb/16.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m17" type="pattern" url="patt/17.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w17"><a-entity gltf-model="glb/17.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m18" type="pattern" url="patt/18.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w18"><a-entity gltf-model="glb/18.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m19" type="pattern" url="patt/19.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w19"><a-entity gltf-model="glb/19.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m20" type="pattern" url="patt/20.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w20"><a-entity gltf-model="glb/20.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m21" type="pattern" url="patt/21.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w21"><a-entity gltf-model="glb/21.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m22" type="pattern" url="patt/22.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w22"><a-entity gltf-model="glb/22.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m23" type="pattern" url="patt/23.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w23"><a-entity gltf-model="glb/23.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m24" type="pattern" url="patt/24.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w24"><a-entity gltf-model="glb/24.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m25" type="pattern" url="patt/25.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w25"><a-entity gltf-model="glb/25.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m26" type="pattern" url="patt/26.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w26"><a-entity gltf-model="glb/26.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m27" type="pattern" url="patt/27.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w27"><a-entity gltf-model="glb/27.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m28" type="pattern" url="patt/28.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w28"><a-entity gltf-model="glb/28.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m29" type="pattern" url="patt/29.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w29"><a-entity gltf-model="glb/29.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m30" type="pattern" url="patt/30.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w30"><a-entity gltf-model="glb/30.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m31" type="pattern" url="patt/31.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w31"><a-entity gltf-model="glb/31.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m32" type="pattern" url="patt/32.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w32"><a-entity gltf-model="glb/32.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m33" type="pattern" url="patt/33.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w33"><a-entity gltf-model="glb/33.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m34" type="pattern" url="patt/34.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w34"><a-entity gltf-model="glb/34.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m35" type="pattern" url="patt/35.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w35"><a-entity gltf-model="glb/35.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m36" type="pattern" url="patt/36.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w36"><a-entity gltf-model="glb/36.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m37" type="pattern" url="patt/37.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w37"><a-entity gltf-model="glb/37.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m38" type="pattern" url="patt/38.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w38"><a-entity gltf-model="glb/38.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m39" type="pattern" url="patt/39.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w39"><a-entity gltf-model="glb/39.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m40" type="pattern" url="patt/40.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w40"><a-entity gltf-model="glb/40.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m41" type="pattern" url="patt/41.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w41"><a-entity gltf-model="glb/41.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m42" type="pattern" url="patt/42.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w42"><a-entity gltf-model="glb/42.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m43" type="pattern" url="patt/43.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w43"><a-entity gltf-model="glb/43.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m44" type="pattern" url="patt/44.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w44"><a-entity gltf-model="glb/44.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m45" type="pattern" url="patt/45.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w45"><a-entity gltf-model="glb/45.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m46" type="pattern" url="patt/46.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w46"><a-entity gltf-model="glb/46.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m47" type="pattern" url="patt/47.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w47"><a-entity gltf-model="glb/47.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m48" type="pattern" url="patt/48.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w48"><a-entity gltf-model="glb/48.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m49" type="pattern" url="patt/49.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w49"><a-entity gltf-model="glb/49.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m50" type="pattern" url="patt/50.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w50"><a-entity gltf-model="glb/50.glb"></a-entity></a-entity></a-marker>
+<a-entity camera></a-entity></a-scene>
+<script>
+const D={"1": ["Hidrógeno", "H", "1s¹", 17, [], 0.08], "2": ["Helio", "He", "1s²", 17, [], 0.08], "3": ["Litio", "Li", "1s² 2s¹", 17, [], 0.1], "4": ["Berilio", "Be", "1s² 2s²", 17, [], 0.1], "5": ["Boro", "B", "1s² 2s² 2p¹", 17, [], 0.12], "6": ["Carbono", "C", "1s² 2s² 2p²", 17, [], 0.12], "7": ["Nitrógeno", "N", "1s² 2s² 2p³", 17, [], 0.12], "8": ["Oxígeno", "O", "1s² 2s² 2p⁴", 17, [], 0.12], "9": ["Flúor", "F", "1s² 2s² 2p⁵", 17, [], 0.12], "10": ["Neón", "Ne", "1s² 2s² 2p⁶", 17, [], 0.12], "11": ["Sodio", "Na", "1s² 2s² 2p⁶ 3s¹", 15.0, [], 0.14], "12": ["Magnesio", "Mg", "1s² 2s² 2p⁶ 3s²", 15.0, [], 0.14], "13": ["Aluminio", "Al", "1s² 2s² 2p⁶ 3s² 3p¹", 13.12, [], 0.16], "14": ["Silicio", "Si", "1s² 2s² 2p⁶ 3s² 3p²", 13.12, [], 0.16], "15": ["Fósforo", "P", "1s² 2s² 2p⁶ 3s² 3p³", 13.12, [], 0.16], "16": ["Azufre", "S", "1s² 2s² 2p⁶ 3s² 3p⁴", 13.12, [], 0.16], "17": ["Cloro", "Cl", "1s² 2s² 2p⁶ 3s² 3p⁵", 13.12, [], 0.16], "18": ["Argón", "Ar", "1s² 2s² 2p⁶ 3s² 3p⁶", 13.12, [], 0.16], "19": ["Potasio", "K", "1s² 2s² 2p⁶ 3s² 3p⁶ 4s¹", 11.67, [], 0.18], "20": ["Calcio", "Ca", "1s² 2s² 2p⁶ 3s² 3p⁶ 4s²", 11.67, [], 0.18], "21": ["Escandio", "Sc", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹ 4s²", 10.5, [], 0.2], "22": ["Titanio", "Ti", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d² 4s²", 10.5, [], 0.2], "23": ["Vanadio", "V", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d³ 4s²", 10.5, [], 0.2], "24": ["Cromo", "Cr", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d⁵ 4s¹", 10.5, [], 0.2], "25": ["Manganeso", "Mn", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d⁵ 4s²", 10.5, [], 0.2], "26": ["Hierro", "Fe", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d⁶ 4s²", 10.5, [], 0.2], "27": ["Cobalto", "Co", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d⁷ 4s²", 10.5, [], 0.2], "28": ["Níquel", "Ni", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d⁸ 4s²", 10.5, [], 0.2], "29": ["Cobre", "Cu", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s¹", 10.5, [], 0.2], "30": ["Zinc", "Zn", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s²", 10.5, [], 0.2], "31": ["Galio", "Ga", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s² 4p¹", 9.55, [], 0.22], "32": ["Germanio", "Ge", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s² 4p²", 9.55, [], 0.22], "33": ["Arsénico", "As", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s² 4p³", 9.55, [], 0.22], "34": ["Selenio", "Se", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s² 4p⁴", 9.55, [], 0.22], "35": ["Bromo", "Br", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s² 4p⁵", 9.55, [], 0.22], "36": ["Kriptón", "Kr", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s² 4p⁶", 9.55, [], 0.22], "37": ["Rubidio", "Rb", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s² 4p⁶ 5s¹", 8.75, [], 0.24], "38": ["Estroncio", "Sr", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s² 4p⁶ 5s²", 8.75, [], 0.24], "39": ["Itrio", "Y", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s² 4p⁶ 4d¹ 5s²", 8.08, [], 0.26], "40": ["Circonio", "Zr", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s² 4p⁶ 4d² 5s²", 8.08, [], 0.26], "41": ["Niobio", "Nb", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s² 4p⁶ 4d⁴ 5s¹", 8.08, [], 0.26], "42": ["Molibdeno", "Mo", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s² 4p⁶ 4d⁵ 5s¹", 8.08, [], 0.26], "43": ["Tecnecio", "Tc", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s² 4p⁶ 4d⁵ 5s²", 8.08, [], 0.26], "44": ["Rutenio", "Ru", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s² 4p⁶ 4d⁷ 5s¹", 8.08, [], 0.26], "45": ["Rodio", "Rh", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s² 4p⁶ 4d⁸ 5s¹", 8.08, [], 0.26], "46": ["Paladio", "Pd", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s² 4p⁶ 4d¹⁰", 8.75, [], 0.24], "47": ["Plata", "Ag", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s² 4p⁶ 4d¹⁰ 5s¹", 8.08, [], 0.26], "48": ["Cadmio", "Cd", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s² 4p⁶ 4d¹⁰ 5s²", 8.08, [], 0.26], "49": ["Indio", "In", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s² 4p⁶ 4d¹⁰ 5s² 5p¹", 7.5, [], 0.28], "50": ["Estaño", "Sn", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s² 4p⁶ 4d¹⁰ 5s² 5p²", 7.5, [], 0.28]};
+const Q=new URLSearchParams(location.search),quiz=Q.get("quiz");
+for(const z in D){const e=document.querySelector("#m"+z+" a-entity"),k=+(Q.get("s")||D[z][3]);
+ e.setAttribute("scale",k+" "+k+" "+k);e.setAttribute("position","0 "+(D[z][5]*k+0.1)+" 0")}
+if(!Q.get("info"))document.getElementById("info").style.display="none";
+(function f(){const v=document.querySelector("video"),st=v&&v.srcObject;if(!st)return setTimeout(f,500);
+const k=st.getVideoTracks()[0],cp=k.getCapabilities?k.getCapabilities():{};
+if(cp.focusMode&&cp.focusMode.includes("continuous"))k.applyConstraints({advanced:[{focusMode:"continuous"}]}).catch(()=>{})})();
+(function(){const sc=document.querySelector("a-scene"),mode=new URLSearchParams(location.search).get("v")||"cover";
+const S=(e,o)=>{for(const k in o)e.style.setProperty(k,o[k],"important")};
+function fix(){requestAnimationFrame(fix);
+ const v=document.querySelector("video"),c=document.querySelector("canvas.a-canvas")||document.querySelector("a-scene canvas"),r=sc&&sc.renderer;
+ if(!v||!c||!r||!v.videoWidth)return;
+ let L,T,W,H;
+ if(mode=="contain"){const k=Math.min(innerWidth/v.videoWidth,innerHeight/v.videoHeight);W=v.videoWidth*k;H=v.videoHeight*k;L=(innerWidth-W)/2;T=(innerHeight-H)/2;
+  S(v,{position:"fixed",left:L+"px",top:T+"px",width:W+"px",height:H+"px",margin:"0"})}
+ else{const b=v.getBoundingClientRect();L=b.left;T=b.top;W=b.width;H=b.height}
+ S(c,{position:"fixed",left:L+"px",top:T+"px",width:W+"px",height:H+"px",margin:"0"});
+ const pr=Math.min(devicePixelRatio||1,2,2200/Math.max(W,H)),bw=Math.round(W*pr),bh=Math.round(H*pr);
+ if(c.width!=bw||c.height!=bh){r.setPixelRatio(1);r.setSize(bw,bh,false)}}
+fix()})();
+if(new URLSearchParams(location.search).get("d")){const d=document.createElement("div");d.style.cssText="position:fixed;top:0;left:0;z-index:20;background:rgba(0,0,0,.7);color:#0f0;font:12px monospace;padding:4px";document.body.appendChild(d);
+setInterval(()=>{const v=document.querySelector("video"),c=document.querySelector("a-scene canvas");d.textContent=(v?"video "+v.videoWidth+"x"+v.videoHeight:"sin video")+" | canvas "+(c?c.width+"x"+c.height:"-")+" | ventana "+innerWidth+"x"+innerHeight+" | AF:"+(typeof AFRAME)+" THREEx:"+(typeof THREEx)+" err:"+(window.__err||"-")+" | modo "+(new URLSearchParams(location.search).get("c")||"3")},700)}
+const t=document.getElementById("t"),s=document.getElementById("s");let cur=0;
+for(const z in D){const m=document.getElementById("m"+z);
+ m.addEventListener("markerFound",()=>{cur=z;if(quiz){t.textContent=D[z][0]+" ("+D[z][1]+")";s.textContent="¿Cuántos electrones, protones y neutrones ves?"}else{t.textContent=D[z][0]+" ("+D[z][1]+") · "+z+" electrones";s.textContent=D[z][2]}});
+ m.addEventListener("markerLost",()=>{if(cur==z){t.textContent="Apunta la cámara a un marcador";s.textContent="azul = electrones · núcleo: rojo = protones, celeste = neutrones"}})}
+</script></body></html>

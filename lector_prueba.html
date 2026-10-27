@@ -1,0 +1,49 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Lector de átomos</title>
+<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/aframe/build/aframe-ar.js"></script>
+<style>body{margin:0;overflow:hidden;background:#000;font-family:system-ui,sans-serif}
+#info{position:fixed;left:0;right:0;bottom:0;padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));background:rgba(5,7,13,.8);color:#fff;text-align:center;z-index:10;font-size:18px}
+#info small{display:block;color:#aab;font-size:12.5px;margin-top:4px}</style></head>
+<body><div id="info"><b id="t">Apunta la cámara a un marcador</b><small id="s">Si el video se ve con mucho zoom, prueba agregar ?c=1 o ?c=2 a la dirección</small></div>
+<script>
+window.addEventListener("error",e=>{window.__err=(e.message||"")+" "+String(e.filename||"").split("/").pop()});
+{const c=new URLSearchParams(location.search).get("c")||"3",p=innerWidth<innerHeight;
+const b="sourceType:webcam;debugUIEnabled:false;detectionMode:mono;patternRatio:0.5;trackingMethod:best;";
+const A={"1":b+"sourceWidth:"+(p?720:1280)+";sourceHeight:"+(p?1280:720)+";displayWidth:"+innerWidth+";displayHeight:"+innerHeight,"2":b+"sourceWidth:1280;sourceHeight:960;displayWidth:1280;displayHeight:960","3":b,"4":b+"sourceWidth:1280;sourceHeight:720","5":b+"sourceWidth:"+(p?480:640)+";sourceHeight:"+(p?640:480),"6":b+"sourceWidth:"+(p?480:640)+";sourceHeight:"+(p?640:480)+";cameraParametersUrl:"+(p?"camera_p.dat":"camera_l.dat")};
+document.write("<a-scene "+(c>="3"?"":"embedded ")+'vr-mode-ui="enabled:false" renderer="logarithmicDepthBuffer:true;alpha:true;antialias:true" arjs="'+(A[c]||A["3"])+'">')}
+</script>
+<a-marker id="m1" type="pattern" url="patt/1.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w1"><a-entity gltf-model="glb/1.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m2" type="pattern" url="patt/2.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w2"><a-entity gltf-model="glb/2.glb"></a-entity></a-entity></a-marker>
+<a-marker id="m26" type="pattern" url="patt/26.patt" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4"><a-entity id="w26"><a-entity gltf-model="glb/26.glb"></a-entity></a-entity></a-marker>
+<a-entity camera></a-entity></a-scene>
+<script>
+const D={"1": ["Hidrógeno", "H", "1s¹", 17, [], 0.08], "2": ["Helio", "He", "1s²", 17, [], 0.08], "26": ["Hierro", "Fe", "1s² 2s² 2p⁶ 3s² 3p⁶ 3d⁶ 4s²", 10.5, [], 0.2]};
+const Q=new URLSearchParams(location.search),quiz=Q.get("quiz");
+for(const z in D){const e=document.querySelector("#m"+z+" a-entity"),k=+(Q.get("s")||D[z][3]);
+ e.setAttribute("scale",k+" "+k+" "+k);e.setAttribute("position","0 "+(D[z][5]*k+0.1)+" 0")}
+if(!Q.get("info"))document.getElementById("info").style.display="none";
+(function f(){const v=document.querySelector("video"),st=v&&v.srcObject;if(!st)return setTimeout(f,500);
+const k=st.getVideoTracks()[0],cp=k.getCapabilities?k.getCapabilities():{};
+if(cp.focusMode&&cp.focusMode.includes("continuous"))k.applyConstraints({advanced:[{focusMode:"continuous"}]}).catch(()=>{})})();
+(function(){const sc=document.querySelector("a-scene"),mode=new URLSearchParams(location.search).get("v")||"cover";
+const S=(e,o)=>{for(const k in o)e.style.setProperty(k,o[k],"important")};
+function fix(){requestAnimationFrame(fix);
+ const v=document.querySelector("video"),c=document.querySelector("canvas.a-canvas")||document.querySelector("a-scene canvas"),r=sc&&sc.renderer;
+ if(!v||!c||!r||!v.videoWidth)return;
+ let L,T,W,H;
+ if(mode=="contain"){const k=Math.min(innerWidth/v.videoWidth,innerHeight/v.videoHeight);W=v.videoWidth*k;H=v.videoHeight*k;L=(innerWidth-W)/2;T=(innerHeight-H)/2;
+  S(v,{position:"fixed",left:L+"px",top:T+"px",width:W+"px",height:H+"px",margin:"0"})}
+ else{const b=v.getBoundingClientRect();L=b.left;T=b.top;W=b.width;H=b.height}
+ S(c,{position:"fixed",left:L+"px",top:T+"px",width:W+"px",height:H+"px",margin:"0"});
+ const pr=Math.min(devicePixelRatio||1,2,2200/Math.max(W,H)),bw=Math.round(W*pr),bh=Math.round(H*pr);
+ if(c.width!=bw||c.height!=bh){r.setPixelRatio(1);r.setSize(bw,bh,false)}}
+fix()})();
+if(new URLSearchParams(location.search).get("d")){const d=document.createElement("div");d.style.cssText="position:fixed;top:0;left:0;z-index:20;background:rgba(0,0,0,.7);color:#0f0;font:12px monospace;padding:4px";document.body.appendChild(d);
+setInterval(()=>{const v=document.querySelector("video"),c=document.querySelector("a-scene canvas");d.textContent=(v?"video "+v.videoWidth+"x"+v.videoHeight:"sin video")+" | canvas "+(c?c.width+"x"+c.height:"-")+" | ventana "+innerWidth+"x"+innerHeight+" | AF:"+(typeof AFRAME)+" THREEx:"+(typeof THREEx)+" err:"+(window.__err||"-")+" | modo "+(new URLSearchParams(location.search).get("c")||"3")},700)}
+const t=document.getElementById("t"),s=document.getElementById("s");let cur=0;
+for(const z in D){const m=document.getElementById("m"+z);
+ m.addEventListener("markerFound",()=>{cur=z;if(quiz){t.textContent=D[z][0]+" ("+D[z][1]+")";s.textContent="¿Cuántos electrones, protones y neutrones ves?"}else{t.textContent=D[z][0]+" ("+D[z][1]+") · "+z+" electrones";s.textContent=D[z][2]}});
+ m.addEventListener("markerLost",()=>{if(cur==z){t.textContent="Apunta la cámara a un marcador";s.textContent="azul = electrones · núcleo: rojo = protones, celeste = neutrones"}})}
+</script></body></html>
