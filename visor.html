@@ -7,11 +7,12 @@
 #info{position:fixed;left:0;right:0;bottom:0;padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));background:rgba(5,7,13,.8);color:#fff;text-align:center;z-index:10;font-size:18px}
 #back{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));left:8px;z-index:15;padding:8px 14px;border-radius:20px;background:rgba(5,7,13,.7);color:#fff;font-size:15px;text-decoration:none}
 #info small{display:block;color:#aab;font-size:12.5px;margin-top:4px}
-#ui{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:rgba(10,14,26,.62);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);z-index:30;color:#fff;user-select:none;-webkit-user-select:none;touch-action:manipulation;max-width:96vw}
-#ui button{width:44px;height:44px;flex:none;border-radius:50%;border:0;background:rgba(255,255,255,.2);color:#fff;font:600 26px/1 system-ui;padding:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-#ui button:active{background:rgba(255,255,255,.4)}
-#ui input{width:min(34vw,150px);min-width:70px}
-#pc{min-width:54px;text-align:center;font:600 14px system-ui;cursor:pointer}</style></head>
+#ui{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(10px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;background:rgba(10,14,26,.5);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);z-index:30;color:#fff;user-select:none;-webkit-user-select:none;touch-action:manipulation;max-width:90vw;opacity:.45;transition:opacity .25s}
+#ui.act{opacity:1}
+#ui button{width:30px;height:30px;flex:none;border-radius:50%;border:0;background:rgba(255,255,255,.22);color:#fff;font:600 18px/1 system-ui;padding:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+#ui button:active{background:rgba(255,255,255,.45)}
+#ui input{width:min(24vw,96px);min-width:56px;height:20px;margin:0}
+#pc{min-width:38px;text-align:center;font:600 11px system-ui;cursor:pointer}</style></head>
 <body><a id="back" href="lector.html">‹ Grupos</a><div id="info"><b id="t">Apunta la cámara a un marcador</b><small id="s">Si el video se ve con mucho zoom, prueba agregar ?c=1 o ?c=2 a la dirección</small></div>
 <div id="ui"><button id="mn" aria-label="Más pequeño">−</button><input id="sl" type="range" min="-100" max="100" step="1" value="0" aria-label="Tamaño"><button id="mp" aria-label="Más grande">+</button><span id="pc" title="Toca para volver al 100%">100%</span></div>
 <script>
@@ -49,11 +50,13 @@ sl.addEventListener("input",()=>cambiar(Math.pow(2,sl.value/50)));
 pc.addEventListener("click",()=>cambiar(1));
 aplicar();
 if(!Q.get("info"))document.getElementById("info").style.display="none";else document.getElementById("ui").style.bottom="100px";
+{const u=document.getElementById("ui");let ta;const act=()=>{u.classList.add("act");clearTimeout(ta);ta=setTimeout(()=>u.classList.remove("act"),2200)};
+ ["pointerdown","input","click"].forEach(n=>u.addEventListener(n,act,true))}
 
 /* ---------- Anti-parpadeo: si el marcador se pierde un instante, el modelo aguanta en su última posición ---------- */
 /* ?h=1200 aguanta más · ?h=0 lo desactiva (el parámetro g ya lo usa el selector de grupos) */
 const HOLD=Q.get("h")===null?700:+Q.get("h");let gaps=0,maxgap=0;
-document.querySelectorAll("a-marker").forEach(m=>{const o=m.object3D;let real=!!o.visible,last=real?performance.now():-1e9;
+window.__ST={};document.querySelectorAll("a-marker").forEach(m=>{const o=m.object3D;let real=!!o.visible,last=real?performance.now():-1e9;window.__ST[m.id]=()=>[real,performance.now()-last];
  Object.defineProperty(o,"visible",{configurable:true,
   get(){return real||performance.now()-last<HOLD},
   set(v){v=!!v;if(v){const n=performance.now(),h=n-last;if(h>150&&h<1e8){gaps++;if(h>maxgap)maxgap=h}last=n}real=v}})});
@@ -62,7 +65,7 @@ const k=st.getVideoTracks()[0],cp=k.getCapabilities?k.getCapabilities():{};
 if(cp.focusMode&&cp.focusMode.includes("continuous"))k.applyConstraints({advanced:[{focusMode:"continuous"}]}).catch(()=>{})})();
 (function(){const sc=document.querySelector("a-scene"),mode=new URLSearchParams(location.search).get("v")||"cover";
 const S=(e,o)=>{for(const k in o)e.style.setProperty(k,o[k],"important")};
-function fix(){requestAnimationFrame(fix);
+function fix(){requestAnimationFrame(fix);if(new URLSearchParams(location.search).get("nofix"))return;
  const v=document.querySelector("video"),c=document.querySelector("canvas.a-canvas")||document.querySelector("a-scene canvas"),r=sc&&sc.renderer;
  if(!v||!c||!r||!v.videoWidth)return;
  let L,T,W,H;
@@ -71,10 +74,18 @@ function fix(){requestAnimationFrame(fix);
  else{const b=v.getBoundingClientRect();L=b.left;T=b.top;W=b.width;H=b.height}
  S(c,{position:"fixed",left:L+"px",top:T+"px",width:W+"px",height:H+"px",margin:"0"});
  const pr=Math.min(devicePixelRatio||1,2,2200/Math.max(W,H)),bw=Math.round(W*pr),bh=Math.round(H*pr);
- if(c.width!=bw||c.height!=bh){r.setPixelRatio(1);r.setSize(bw,bh,false)}}
+ if(c.width!=bw||c.height!=bh){window.__rs=(window.__rs||0)+1;r.setPixelRatio(1);r.setSize(bw,bh,false)}}
 fix()})();
-if(new URLSearchParams(location.search).get("d")){const d=document.createElement("div");d.style.cssText="position:fixed;top:0;left:0;z-index:20;background:rgba(0,0,0,.7);color:#0f0;font:12px monospace;padding:4px";document.body.appendChild(d);
-setInterval(()=>{const v=document.querySelector("video"),c=document.querySelector("a-scene canvas");d.textContent=(v?"video "+v.videoWidth+"x"+v.videoHeight:"sin video")+" | canvas "+(c?c.width+"x"+c.height:"-")+" | ventana "+innerWidth+"x"+innerHeight+" | AF:"+(typeof AFRAME)+" THREEx:"+(typeof THREEx)+" err:"+(window.__err||"-")+" | modo "+(new URLSearchParams(location.search).get("c")||"3")+" | huecos:"+gaps+" (máx "+Math.round(maxgap)+"ms) hold:"+HOLD+"ms"},700)}
+if(new URLSearchParams(location.search).get("d")){const d=document.createElement("div");d.style.cssText="position:fixed;top:44px;left:0;z-index:20;background:rgba(0,0,0,.75);color:#0f0;font:11px monospace;padding:4px;white-space:pre";document.body.appendChild(d);
+const FR={n:0,last:performance.now(),max:0,r0:performance.now(),c0:0,fps:0,pk:0};
+(function w(){const r=document.querySelector("a-scene").renderer;if(!r)return setTimeout(w,300);const o=r.render.bind(r);
+ r.render=function(a,b){const t=performance.now(),g=t-FR.last;FR.last=t;if(g>FR.max)FR.max=g;FR.n++;return o(a,b)}})();
+setInterval(()=>{const v=document.querySelector("video"),c=document.querySelector("a-scene canvas"),t=performance.now();
+ FR.fps=(FR.n-FR.c0)*1000/(t-FR.r0);FR.c0=FR.n;FR.r0=t;if(t-(FR.rst||0)>5000){FR.pk=FR.max;FR.max=0;FR.rst=t}
+ const st=[];for(const id in window.__ST){const x=window.__ST[id]();if(x[1]<5000)st.push(id+" real:"+(x[0]?1:0)+" ("+Math.round(x[1])+"ms)")}
+ d.textContent=(v?"video "+v.videoWidth+"x"+v.videoHeight:"sin video")+" | canvas "+(c?c.width+"x"+c.height:"-")+" | modo "+(new URLSearchParams(location.search).get("c")||"3")+" | err:"+(window.__err||"-")
+ +"\nfps:"+FR.fps.toFixed(0)+"  pico entre cuadros:"+Math.round(Math.max(FR.max,FR.pk))+"ms  redimensiones:"+(window.__rs||0)
+ +"\nhuecos:"+gaps+" (máx "+Math.round(maxgap)+"ms)  aguanta:"+HOLD+"ms\n"+(st.join("\n")||"marcador: ninguno")},500)}
 const t=document.getElementById("t"),s=document.getElementById("s");let cur=0;
 for(const z in D){const m=document.getElementById("m"+z);
  m.addEventListener("markerFound",()=>{cur=z;if(quiz){t.textContent=D[z][0]+" ("+D[z][1]+")";s.textContent="¿Cuántos electrones, protones y neutrones ves?"}else{t.textContent=D[z][0]+" ("+D[z][1]+") · "+z+" electrones";s.textContent=D[z][2]}});
