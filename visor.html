@@ -74,7 +74,10 @@ function fix(){requestAnimationFrame(fix);if(new URLSearchParams(location.search
  else{const b=v.getBoundingClientRect();L=b.left;T=b.top;W=b.width;H=b.height}
  S(c,{position:"fixed",left:L+"px",top:T+"px",width:W+"px",height:H+"px",margin:"0"});
  const pr=Math.min(devicePixelRatio||1,2,2200/Math.max(W,H)),bw=Math.round(W*pr),bh=Math.round(H*pr);
- if(c.width!=bw||c.height!=bh){window.__rs=(window.__rs||0)+1;r.setPixelRatio(1);r.setSize(bw,bh,false)}}
+ /* Solo este bloque puede cambiar el tamaño del lienzo: cada setSize lo borra y se ve como un parpadeo */
+ if(!r.__w){r.__w=1;const o=r.setSize.bind(r);r.setSize=function(a,b,u){if(!window.__mine){window.__blk=(window.__blk||0)+1;return}return o(a,b,u)}}
+ window.__obj=bw+"x"+bh;
+ if(Math.abs(c.width-bw)>bw*.02||Math.abs(c.height-bh)>bh*.02){window.__rs=(window.__rs||0)+1;window.__mine=1;r.setPixelRatio(1);r.setSize(bw,bh,false);window.__mine=0}}
 fix()})();
 if(new URLSearchParams(location.search).get("d")){const d=document.createElement("div");d.style.cssText="position:fixed;top:44px;left:0;z-index:20;background:rgba(0,0,0,.75);color:#0f0;font:11px monospace;padding:4px;white-space:pre";document.body.appendChild(d);
 const FR={n:0,last:performance.now(),max:0,r0:performance.now(),c0:0,fps:0,pk:0};
@@ -84,7 +87,7 @@ setInterval(()=>{const v=document.querySelector("video"),c=document.querySelecto
  FR.fps=(FR.n-FR.c0)*1000/(t-FR.r0);FR.c0=FR.n;FR.r0=t;if(t-(FR.rst||0)>5000){FR.pk=FR.max;FR.max=0;FR.rst=t}
  const st=[];for(const id in window.__ST){const x=window.__ST[id]();if(x[1]<5000)st.push(id+" real:"+(x[0]?1:0)+" ("+Math.round(x[1])+"ms)")}
  d.textContent=(v?"video "+v.videoWidth+"x"+v.videoHeight:"sin video")+" | canvas "+(c?c.width+"x"+c.height:"-")+" | modo "+(new URLSearchParams(location.search).get("c")||"3")+" | err:"+(window.__err||"-")
- +"\nfps:"+FR.fps.toFixed(0)+"  pico entre cuadros:"+Math.round(Math.max(FR.max,FR.pk))+"ms  redimensiones:"+(window.__rs||0)
+ +"\nfps:"+FR.fps.toFixed(0)+"  pico entre cuadros:"+Math.round(Math.max(FR.max,FR.pk))+"ms  redim:"+(window.__rs||0)+" bloq:"+(window.__blk||0)+" obj:"+(window.__obj||"-")
  +"\nhuecos:"+gaps+" (máx "+Math.round(maxgap)+"ms)  aguanta:"+HOLD+"ms\n"+(st.join("\n")||"marcador: ninguno")},500)}
 const t=document.getElementById("t"),s=document.getElementById("s");let cur=0;
 for(const z in D){const m=document.getElementById("m"+z);
