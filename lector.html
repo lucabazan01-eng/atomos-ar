@@ -2,18 +2,33 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Lector de átomos</title>
 <style>
-:root{--bg:#05070d;--fg:#fff;--mut:#aab;--card:#121826;--bd:#2a3550}
-@media (prefers-color-scheme:light){:root{--bg:#f3f5fa;--fg:#111;--mut:#556;--card:#fff;--bd:#c8d0e0}}
-body{margin:0;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;background:var(--bg);color:var(--fg);font-family:system-ui,sans-serif;padding:20px;box-sizing:border-box}
-h1{font-size:22px;margin:0 0 6px;text-align:center}p{color:var(--mut);margin:0 0 22px;text-align:center;font-size:15px;max-width:340px}
-a{display:block;width:100%;max-width:340px;box-sizing:border-box;margin:8px 0;padding:18px;border-radius:14px;background:var(--card);border:1px solid var(--bd);color:var(--fg);text-decoration:none;text-align:center;font-size:19px;font-weight:600}
-a small{display:block;font-weight:400;font-size:13px;color:var(--mut);margin-top:3px}
+:root{--bg:#05070d;--fg:#fff;--mut:#aab;--card:#121826;--bd:#2a3550;--on:#1d2c52}
+@media (prefers-color-scheme:light){:root{--bg:#f3f5fa;--fg:#111;--mut:#556;--card:#fff;--bd:#c8d0e0;--on:#dbe6ff}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,sans-serif;padding:18px 14px 110px}
+h1{font-size:21px;margin:4px 0 6px;text-align:center}p{color:var(--mut);margin:0 auto 16px;text-align:center;font-size:14.5px;max-width:360px}
+#grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:440px;margin:0 auto}
+button.g{text-align:left;padding:12px 12px 12px 14px;border-radius:12px;background:var(--card);border:1px solid var(--bd);border-left:7px solid var(--c);color:var(--fg);font:inherit;cursor:pointer}
+button.g b{display:block;font-size:15.5px}button.g small{display:block;color:var(--mut);font-size:12.5px;margin-top:3px}
+button.g.on{background:var(--on);outline:2px solid var(--c)}button.g.off{opacity:.35}
+#bar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--card);border-top:1px solid var(--bd);display:flex;align-items:center;gap:12px;justify-content:center}
+#cnt{font-size:15px}#go{padding:12px 22px;border-radius:12px;background:#2f6bff;color:#fff;font-weight:600;text-decoration:none;font-size:16px}
+#go.dis{opacity:.4;pointer-events:none}
 </style></head><body>
 <h1>Lector de átomos</h1>
-<p>Elegí el rango del marcador que vas a apuntar (el número está debajo del símbolo).</p>
-<a id="a1" href="lector1.html">1 a 50<small>H … Sn</small></a>
-<a id="a2" href="lector2.html">51 a 100<small>Sb … Fm</small></a>
-<a id="a3" href="lector3.html">101 a 118<small>Md … Og</small></a>
+<p>Elegí el grupo de los marcadores que vas a apuntar. Podés combinar varios mientras no pasen de 50 elementos.</p>
+<div id="grid"></div>
+<div id="bar"><span id="cnt"></span><a id="go" href="#">Abrir visor</a></div>
 <script>
-const q=location.search;for(const i of[1,2,3])document.getElementById("a"+i).href="lector"+i+".html"+q;
+const G={"alc": ["Metales alcalinos", "#e5484d", [3, 11, 19, 37, 55, 87]], "alt": ["Alcalinotérreos", "#f08c3a", [4, 12, 20, 38, 56, 88]], "tr": ["Metales de transición", "#3e8ef7", [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 72, 73, 74, 75, 76, 77, 78, 79, 80, 104, 105, 106, 107, 108, 109, 110, 111, 112]], "lan": ["Lantánidos", "#8a63d2", [57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71]], "act": ["Actínidos", "#c94fa0", [89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103]], "pt": ["Otros metales", "#2eb67d", [13, 31, 49, 50, 81, 82, 83, 84, 113, 114, 115, 116]], "mo": ["Metaloides", "#3fa7a0", [5, 14, 32, 33, 51, 52]], "nm": ["No metales", "#d4a017", [1, 6, 7, 8, 15, 16, 34]], "ha": ["Halógenos", "#8fb339", [9, 17, 35, 53, 85, 117]], "gn": ["Gases nobles", "#6f7cf0", [2, 10, 18, 36, 54, 86, 118]]},MAX=50,Q=new URLSearchParams(location.search),sel=new Set();
+const tot=()=>[...sel].reduce((a,k)=>a+G[k][2].length,0);
+(Q.get("g")||"").split(",").forEach(k=>{if(G[k]&&!sel.has(k)&&tot()+G[k][2].length<=MAX)sel.add(k)});
+const grid=document.getElementById("grid"),B={};
+for(const k in G){const b=document.createElement("button");b.className="g";b.style.setProperty("--c",G[k][1]);
+ b.innerHTML="<b>"+G[k][0]+"</b><small>"+G[k][2].length+" elementos</small>";
+ b.onclick=()=>{if(sel.has(k))sel.delete(k);else if(tot()+G[k][2].length<=MAX)sel.add(k);draw()};grid.appendChild(b);B[k]=b}
+function draw(){const n=tot();for(const k in G)B[k].className="g"+(sel.has(k)?" on":(n+G[k][2].length>MAX?" off":""));
+ document.getElementById("cnt").textContent=n+" / "+MAX+" elementos";
+ const P=new URLSearchParams(Q);P.set("g",[...sel].join(","));const go=document.getElementById("go");
+ go.href="visor.html?"+P.toString();go.className=n?"":"dis"}
+draw();
 </script></body></html>
