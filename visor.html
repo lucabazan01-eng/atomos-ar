@@ -43,40 +43,46 @@
 <body>
 <div id="intro" aria-hidden="true"><canvas id="mx"></canvas><p id="introT">Preparando la cámara…</p></div>
 <script>
-(function(){const cv=document.getElementById("mx");if(!cv)return;const cx=cv.getContext("2d"),rm=matchMedia("(prefers-reduced-motion:reduce)").matches,R=Math.random;
+(function(){const cv=document.getElementById("mx");if(!cv)return;const cx=cv.getContext("2d",{alpha:false}),rm=matchMedia("(prefers-reduced-motion:reduce)").matches,R=Math.random;
 let W=0,H=0,S=0;
-function rs(){const d=Math.min(devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;cv.width=Math.round(W*d);cv.height=Math.round(H*d);cx.setTransform(d,0,0,d,0,0);S=Math.min(W,H)*.34}
+function rs(){const d=Math.min(devicePixelRatio||1,1.5);W=cv.clientWidth;H=cv.clientHeight;cv.width=Math.round(W*d);cv.height=Math.round(H*d);cx.setTransform(d,0,0,d,0,0);S=Math.min(W,H)*.34}
 rs();addEventListener("resize",rs);
-const g=()=>R()<.5?"0":"1",P=[];
+const g=()=>R()<.5?0:1,P=[];
+/* sprites precalculados: dibujar una imagen es mucho más barato que texto con resplandor en cada cuadro */
+const mk=(w,fn)=>{const c=document.createElement("canvas");c.width=c.height=w;fn(c.getContext("2d"),w);return c};
+const gl=(col,glow)=>[0,1].map(d=>mk(48,(x,w)=>{x.font="bold 26px 'Courier New',monospace";x.textAlign="center";x.textBaseline="middle";x.fillStyle=col;if(glow){x.shadowColor=col;x.shadowBlur=glow}x.fillText(""+d,w/2,w/2+1)}));
+const GH=gl("#e6ffee",8),GT=gl("#00ff6a",0),GE=gl("#3de6ff",9);
+const rg=(w,st)=>mk(w,(x,w)=>{const q=x.createRadialGradient(w/2,w/2,0,w/2,w/2,w/2);st.forEach(s=>q.addColorStop(s[0],s[1]));x.fillStyle=q;x.fillRect(0,0,w,w)});
+const DG=rg(32,[[0,"rgba(25,255,122,1)"],[.5,"rgba(25,255,122,.95)"],[1,"rgba(25,255,122,0)"]]),
+ DN=rg(64,[[0,"rgba(255,255,255,1)"],[.22,"rgba(234,255,240,1)"],[.3,"rgba(120,255,170,.55)"],[1,"rgba(45,255,122,0)"]]),
+ DE=rg(64,[[0,"rgba(255,255,255,1)"],[.2,"rgba(61,230,255,1)"],[.3,"rgba(61,230,255,.5)"],[1,"rgba(61,230,255,0)"]]);
+const spr=(im,x,y,s,al)=>{if(al<=.01||s<.5)return;cx.globalAlpha=al;cx.drawImage(im,x-s/2,y-s/2,s,s)};
+const sm=v=>{v=Math.max(0,Math.min(1,v));return v*v*(3-2*v)};
 /* nube de probabilidad: densa cerca del núcleo, rala hacia afuera */
 for(let i=0;i<380;i++){const nuc=i<28,th=Math.acos(2*R()-1),ph=6.2832*R(),r=nuc?.05+R()*.09:.18+Math.pow(R(),1.7)*.95;
- P.push({nuc,x:r*Math.sin(th)*Math.cos(ph),y:r*Math.cos(th),z:r*Math.sin(th)*Math.sin(ph),sx:(R()-.5)*1.1,sy:-(.55+R()*.4),d:R()*1.6,du:1.1+R(),c:[g(),g(),g(),g(),g()],ph:6.2832*R()})}
+ P.push({nuc,x:r*Math.sin(th)*Math.cos(ph),y:r*Math.cos(th),z:r*Math.sin(th)*Math.sin(ph),sx:(R()-.5)*1.1,sy:-(.55+R()*.4),d:R()*1.6,du:1.1+R(),c:[g(),g(),g(),g()],ph:6.2832*R()})}
 const E=[0,1,2].map(i=>({r:.5+i*.28,w:2.4-i*.5,a0:i*2.1,tl:.5+i*.55}));
-const t0=performance.now();
-function glyph(ch,x,y,sz,col,al,glow){cx.globalAlpha=al;cx.fillStyle=col;cx.font="bold "+sz.toFixed(1)+"px 'Courier New',monospace";if(glow){cx.shadowColor=col;cx.shadowBlur=glow}cx.fillText(ch,x,y);if(glow)cx.shadowBlur=0}
-function dot(x,y,r,col,al,glow){cx.globalAlpha=al;cx.fillStyle=col;if(glow){cx.shadowColor=col;cx.shadowBlur=glow}cx.beginPath();cx.arc(x,y,Math.max(.1,r),0,6.2832);cx.fill();if(glow)cx.shadowBlur=0}
-const sm=v=>{v=Math.max(0,Math.min(1,v));return v*v*(3-2*v)};
+const t0=performance.now();let PX=0,PY=0,PZ=0,PF=1;
 function draw(now){if(!cv.isConnected)return;requestAnimationFrame(draw);
- const t=rm?9:(now-t0)/1000,ox=W/2,oy=H*.44,an=t*.45,ca=Math.cos(an),sa=Math.sin(an),br=1+.045*Math.sin(t*2);
- cx.globalAlpha=1;cx.fillStyle="#05070d";cx.fillRect(0,0,W,H);cx.textAlign="center";cx.textBaseline="middle";
- const pr=(x,y,z)=>{x*=br;y*=br;z*=br;const xr=x*ca+z*sa,zr=-x*sa+z*ca,f=1/(1-zr*.3);return[ox+xr*S*f,oy+y*S*f,zr,f]};
- for(const p of P){if(t<p.d)continue;const u=Math.min(1,(t-p.d)/p.du),[tx,ty,zr,f]=pr(p.x,p.y,p.z),gx=ox+p.sx*W,gy=oy+p.sy*H;
-  if(R()<.07)p.c[(R()*5)|0]=g();
-  /* aspecto final: punto de la nube (o del núcleo) */
-  const fl=.75+.25*Math.sin(t*3+p.ph),col=p.nuc?"#eafff0":"#19ff7a",rd=p.nuc?2.7*f:.5+1.1*f,
-   fa=p.nuc?.95:Math.max(.12,Math.min(.8,(.45+.4*zr)*fl)),gl=p.nuc?10:0;
+ const t=rm?9:Math.max(0,(now-t0)/1000),ox=W/2,oy=H*.44,an=t*.45,ca=Math.cos(an),sa=Math.sin(an),br=1+.045*Math.sin(t*2);
+ cx.globalAlpha=1;cx.fillStyle="#05070d";cx.fillRect(0,0,W,H);
+ const pr=(x,y,z)=>{x*=br;y*=br;z*=br;const xr=x*ca+z*sa,zr=-x*sa+z*ca,f=1/(1-zr*.3);PX=ox+xr*S*f;PY=oy+y*S*f;PZ=zr;PF=f};
+ for(const p of P){if(t<p.d)continue;const u=Math.min(1,(t-p.d)/p.du);pr(p.x,p.y,p.z);const tx=PX,ty=PY,zr=PZ,f=PF,gx=ox+p.sx*W,gy=oy+p.sy*H;
+  if(R()<.05)p.c[(R()*4)|0]=g();
+  const fl=.75+.25*Math.sin(t*3+p.ph),rd=p.nuc?2.7*f:.5+1.1*f,fa=p.nuc?.95:Math.max(.12,Math.min(.8,(.45+.4*zr)*fl)),
+   im=p.nuc?DN:DG,ds=p.nuc?rd*6.5:rd*4;
   if(u<1){/* cae como lluvia de Matrix; al acercarse los 0 y 1 se deshacen en puntitos */
    const m=sm((u-.5)/.45);
-   for(let k=4;k>=0;k--){const uu=Math.max(0,u-k*.045),e=1-Math.pow(1-uu,3),x=gx+(tx-gx)*e,y=gy+(ty-gy)*e;
-    if(k){if(m<1)glyph(p.c[k],x,y,11,"#00ff6a",(.55-k*.1)*(1-m),0)}
-    else{if(m<1)glyph(p.c[0],x,y,11*(1-.5*m),"#e6ffee",1-m,8*(1-m));
-     if(m>0)dot(x,y,rd*(.4+.6*m),col,fa*m,gl*m)}}}
-  else dot(tx,ty,rd,col,fa,gl)}
+   for(let k=3;k>=0;k--){const uu=Math.max(0,u-k*.05),e=1-Math.pow(1-uu,3),x=gx+(tx-gx)*e,y=gy+(ty-gy)*e;
+    if(k){if(m<1)spr(GT[p.c[k]],x,y,20,(.55-k*.12)*(1-m))}
+    else{if(m<1)spr(GH[p.c[0]],x,y,20*(1-.5*m),1-m);if(m>0)spr(im,x,y,ds*(.4+.6*m),fa*m)}}}
+  else spr(im,tx,ty,ds,fa)}
  if(t>2.4){/* electrones: llegan como 1 y 0 celestes y se convierten en puntos que orbitan */
   const q0=t-2.4,al=Math.min(1,q0),m=sm((q0-.2)/1.1),ap=1+(1-sm(q0/1.4))*2.2;
-  E.forEach(e=>{for(let k=5;k>=0;k--){const a=e.a0+t*e.w-k*.12,x=Math.cos(a)*e.r*ap,y0=Math.sin(a)*e.r*ap,q=pr(x,y0*Math.cos(e.tl),y0*Math.sin(e.tl)),a2=al*(k?.5-k*.07:1);
-   if(m<1)glyph(g(),q[0],q[1],14*q[3],"#3de6ff",a2*(1-m),k?0:12*(1-m));
-   if(m>0)dot(q[0],q[1],Math.max(.6,3.4-k*.5)*q[3]*m,"#3de6ff",a2*m,k?0:14*m)}})}
+  E.forEach(e=>{for(let k=4;k>=0;k--){const a=e.a0+t*e.w-k*.12,x=Math.cos(a)*e.r*ap,y0=Math.sin(a)*e.r*ap;pr(x,y0*Math.cos(e.tl),y0*Math.sin(e.tl));
+   const a2=al*(k?.5-k*.09:1);
+   if(m<1)spr(GE[g()],PX,PY,26*PF,a2*(1-m));
+   if(m>0)spr(DE,PX,PY,Math.max(.6,3.4-k*.55)*PF*6.5*m,a2*m)}})}
  cx.globalAlpha=1}
 requestAnimationFrame(draw)})();
 </script>
