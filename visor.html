@@ -54,21 +54,29 @@ for(let i=0;i<380;i++){const nuc=i<28,th=Math.acos(2*R()-1),ph=6.2832*R(),r=nuc?
 const E=[0,1,2].map(i=>({r:.5+i*.28,w:2.4-i*.5,a0:i*2.1,tl:.5+i*.55}));
 const t0=performance.now();
 function glyph(ch,x,y,sz,col,al,glow){cx.globalAlpha=al;cx.fillStyle=col;cx.font="bold "+sz.toFixed(1)+"px 'Courier New',monospace";if(glow){cx.shadowColor=col;cx.shadowBlur=glow}cx.fillText(ch,x,y);if(glow)cx.shadowBlur=0}
+function dot(x,y,r,col,al,glow){cx.globalAlpha=al;cx.fillStyle=col;if(glow){cx.shadowColor=col;cx.shadowBlur=glow}cx.beginPath();cx.arc(x,y,Math.max(.1,r),0,6.2832);cx.fill();if(glow)cx.shadowBlur=0}
+const sm=v=>{v=Math.max(0,Math.min(1,v));return v*v*(3-2*v)};
 function draw(now){if(!cv.isConnected)return;requestAnimationFrame(draw);
  const t=rm?9:(now-t0)/1000,ox=W/2,oy=H*.44,an=t*.45,ca=Math.cos(an),sa=Math.sin(an),br=1+.045*Math.sin(t*2);
  cx.globalAlpha=1;cx.fillStyle="#05070d";cx.fillRect(0,0,W,H);cx.textAlign="center";cx.textBaseline="middle";
  const pr=(x,y,z)=>{x*=br;y*=br;z*=br;const xr=x*ca+z*sa,zr=-x*sa+z*ca,f=1/(1-zr*.3);return[ox+xr*S*f,oy+y*S*f,zr,f]};
  for(const p of P){if(t<p.d)continue;const u=Math.min(1,(t-p.d)/p.du),[tx,ty,zr,f]=pr(p.x,p.y,p.z),gx=ox+p.sx*W,gy=oy+p.sy*H;
   if(R()<.07)p.c[(R()*5)|0]=g();
-  if(u<1){/* cae como lluvia de Matrix y converge hacia su lugar en la nube */
-   for(let k=4;k>=0;k--){const uu=Math.max(0,u-k*.045),e=1-Math.pow(1-uu,3);
-    glyph(p.c[k],gx+(tx-gx)*e,gy+(ty-gy)*e,11,k?"#00ff6a":"#e6ffee",k?.55-k*.1:1,k?0:8)}}
-  else{const fl=.75+.25*Math.sin(t*3+p.ph);/* ya forma parte del átomo */
-   if(p.nuc)glyph(p.c[0],tx,ty,13*f,"#eafff0",.95,10);
-   else glyph(p.c[0],tx,ty,8+3*f,"#19ff7a",Math.max(.12,Math.min(.8,(.45+.4*zr)*fl)),0)}}
- if(t>2.4){const al=Math.min(1,t-2.4);/* electrones orbitando */
-  E.forEach(e=>{for(let k=5;k>=0;k--){const a=e.a0+t*e.w-k*.12,x=Math.cos(a)*e.r,y0=Math.sin(a)*e.r,q=pr(x,y0*Math.cos(e.tl),y0*Math.sin(e.tl));
-   glyph(g(),q[0],q[1],14*q[3],"#3de6ff",al*(k?.5-k*.07:1),k?0:12)}})}
+  /* aspecto final: punto de la nube (o del núcleo) */
+  const fl=.75+.25*Math.sin(t*3+p.ph),col=p.nuc?"#eafff0":"#19ff7a",rd=p.nuc?2.7*f:.5+1.1*f,
+   fa=p.nuc?.95:Math.max(.12,Math.min(.8,(.45+.4*zr)*fl)),gl=p.nuc?10:0;
+  if(u<1){/* cae como lluvia de Matrix; al acercarse los 0 y 1 se deshacen en puntitos */
+   const m=sm((u-.5)/.45);
+   for(let k=4;k>=0;k--){const uu=Math.max(0,u-k*.045),e=1-Math.pow(1-uu,3),x=gx+(tx-gx)*e,y=gy+(ty-gy)*e;
+    if(k){if(m<1)glyph(p.c[k],x,y,11,"#00ff6a",(.55-k*.1)*(1-m),0)}
+    else{if(m<1)glyph(p.c[0],x,y,11*(1-.5*m),"#e6ffee",1-m,8*(1-m));
+     if(m>0)dot(x,y,rd*(.4+.6*m),col,fa*m,gl*m)}}}
+  else dot(tx,ty,rd,col,fa,gl)}
+ if(t>2.4){/* electrones: llegan como 1 y 0 celestes y se convierten en puntos que orbitan */
+  const q0=t-2.4,al=Math.min(1,q0),m=sm((q0-.2)/1.1),ap=1+(1-sm(q0/1.4))*2.2;
+  E.forEach(e=>{for(let k=5;k>=0;k--){const a=e.a0+t*e.w-k*.12,x=Math.cos(a)*e.r*ap,y0=Math.sin(a)*e.r*ap,q=pr(x,y0*Math.cos(e.tl),y0*Math.sin(e.tl)),a2=al*(k?.5-k*.07:1);
+   if(m<1)glyph(g(),q[0],q[1],14*q[3],"#3de6ff",a2*(1-m),k?0:12*(1-m));
+   if(m>0)dot(q[0],q[1],Math.max(.6,3.4-k*.5)*q[3]*m,"#3de6ff",a2*m,k?0:14*m)}})}
  cx.globalAlpha=1}
 requestAnimationFrame(draw)})();
 </script>
