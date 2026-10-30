@@ -13,24 +13,13 @@
 #ui button:active{background:rgba(255,255,255,.45)}
 #ui input{width:min(24vw,96px);min-width:56px;height:20px;margin:0}
 #pc{min-width:38px;text-align:center;font:600 11px system-ui;cursor:pointer}
-/* ---------- Pantalla de entrada: átomo animado mientras arranca la cámara ---------- */
-#intro{position:fixed;inset:0;z-index:100;background:#05070d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:38px;transition:opacity .7s ease,transform .7s cubic-bezier(.6,0,.2,1)}
+/* ---------- Pantalla de entrada: átomo de nube de probabilidad hecho de 0 y 1 (estilo Matrix) ---------- */
+#intro{position:fixed;inset:0;z-index:100;background:#05070d;transition:opacity .7s ease,transform .7s cubic-bezier(.6,0,.2,1)}
 #intro.out{opacity:0;transform:scale(1.35);pointer-events:none}
-#intro .at{position:relative;width:min(48vw,190px);aspect-ratio:1;animation:ent .9s cubic-bezier(.3,1.4,.5,1) backwards}
-#intro .o{position:absolute;inset:0;transform:rotate(var(--r))}
-#intro .o b{position:absolute;inset:32% 0;border-radius:50%;border:1.5px solid var(--c);box-shadow:0 0 10px var(--c),inset 0 0 10px var(--c);opacity:.85}
-#intro .ex,#intro .ey{position:absolute;inset:0}
-#intro .ex{animation:ex 1.15s cubic-bezier(.37,0,.63,1) infinite alternate;animation-delay:var(--t)}
-#intro .ey{animation:ey 1.15s cubic-bezier(.37,0,.63,1) infinite alternate;animation-delay:calc(var(--t) - .575s)}
-#intro .ey i{position:absolute;left:50%;top:50%;width:11px;height:11px;margin:-5.5px;border-radius:50%;background:var(--c);box-shadow:0 0 12px 3px var(--c)}
-#intro .nu{position:absolute;left:50%;top:50%;width:15%;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle at 35% 35%,#ffc2c8,#ff4d6a 55%,#a3203a);box-shadow:0 0 20px 4px rgba(255,77,106,.7);animation:lat 1s ease-in-out infinite alternate}
-#intro p{margin:0;color:#7fe9ff;font:300 17px/1 system-ui,-apple-system,sans-serif;letter-spacing:1.2px;text-shadow:0 0 8px rgba(61,230,255,.8);animation:resp 1.4s ease-in-out infinite alternate}
-@keyframes ex{from{transform:translateX(-50%)}to{transform:translateX(50%)}}
-@keyframes ey{from{transform:translateY(-18%)}to{transform:translateY(18%)}}
-@keyframes lat{from{transform:translate(-50%,-50%) scale(.85)}to{transform:translate(-50%,-50%) scale(1.12)}}
-@keyframes resp{from{opacity:.45}to{opacity:1}}
-@keyframes ent{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
-@media (prefers-reduced-motion:reduce){#intro .ex,#intro .ey,#intro .nu,#intro p,#intro .at{animation:none}}
+#intro canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#intro p{position:absolute;left:0;right:0;bottom:calc(11% + env(safe-area-inset-bottom,0px));margin:0;text-align:center;color:#2dff7a;font:400 16px/1 "Courier New",monospace;letter-spacing:1.5px;text-shadow:0 0 8px rgba(45,255,122,.8);animation:resp 1.2s ease-in-out infinite alternate}
+@keyframes resp{from{opacity:.5}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){#intro p{animation:none}}
 #capb{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));right:8px;z-index:15;padding:8px 14px;border-radius:20px;border:0;background:rgba(5,7,13,.7);color:#fff;font:15px system-ui,sans-serif;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 #capb.on{background:rgba(61,230,255,.28)}
 #capp{position:fixed;top:calc(52px + env(safe-area-inset-top,0px));right:8px;z-index:16;width:min(270px,86vw);padding:10px 10px 12px;border-radius:16px;background:rgba(8,12,24,.9);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#fff;font:14px system-ui,sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.45)}
@@ -44,11 +33,47 @@
 #capp .cf{display:flex;gap:6px;margin-top:8px}
 #capp .cf button{flex:1;padding:8px;border-radius:12px;border:0;background:rgba(255,255,255,.14);color:#fff;font:13px system-ui,sans-serif;touch-action:manipulation}
 #capp .ca{display:flex;align-items:center;gap:8px;margin:10px 2px 0;font-size:13px;color:#cfd8ee}
+
+#capp{max-height:calc(100vh - 70px - env(safe-area-inset-top,0px));overflow-y:auto}
+#capp .cn{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+#capp .cn button{padding:9px 0;border-radius:10px;border:1.5px solid rgba(255,255,255,.18);background:transparent;color:#cfd8ee;font:600 13px system-ui,sans-serif;opacity:.5;touch-action:manipulation}
+#capp .cn button.on{opacity:1;border-color:#3de6ff;background:rgba(61,230,255,.16);color:#fff;box-shadow:0 0 8px rgba(61,230,255,.35)}
+#capp .sec{margin-top:12px}
 </style></head>
 <body>
-<div id="intro" aria-hidden="true"><div class="at"><div class="o" style="--r:0deg;--c:#3de6ff;--t:0s"><b></b><div class="ex"><div class="ey"><i></i></div></div></div><div class="o" style="--r:60deg;--c:#ff4fc3;--t:-.4s"><b></b><div class="ex"><div class="ey"><i></i></div></div></div><div class="o" style="--r:120deg;--c:#ffd84a;--t:-.8s"><b></b><div class="ex"><div class="ey"><i></i></div></div></div><div class="nu"></div></div><p id="introT">Preparando la cámara…</p></div>
+<div id="intro" aria-hidden="true"><canvas id="mx"></canvas><p id="introT">Preparando la cámara…</p></div>
 <script>
-(function(){const it=document.getElementById("intro");if(!it)return;const t0=performance.now(),MIN=1500;let ok=0;
+(function(){const cv=document.getElementById("mx");if(!cv)return;const cx=cv.getContext("2d"),rm=matchMedia("(prefers-reduced-motion:reduce)").matches,R=Math.random;
+let W=0,H=0,S=0;
+function rs(){const d=Math.min(devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;cv.width=Math.round(W*d);cv.height=Math.round(H*d);cx.setTransform(d,0,0,d,0,0);S=Math.min(W,H)*.34}
+rs();addEventListener("resize",rs);
+const g=()=>R()<.5?"0":"1",P=[];
+/* nube de probabilidad: densa cerca del núcleo, rala hacia afuera */
+for(let i=0;i<380;i++){const nuc=i<28,th=Math.acos(2*R()-1),ph=6.2832*R(),r=nuc?.05+R()*.09:.18+Math.pow(R(),1.7)*.95;
+ P.push({nuc,x:r*Math.sin(th)*Math.cos(ph),y:r*Math.cos(th),z:r*Math.sin(th)*Math.sin(ph),sx:(R()-.5)*1.1,sy:-(.55+R()*.4),d:R()*1.6,du:1.1+R(),c:[g(),g(),g(),g(),g()],ph:6.2832*R()})}
+const E=[0,1,2].map(i=>({r:.5+i*.28,w:2.4-i*.5,a0:i*2.1,tl:.5+i*.55}));
+const t0=performance.now();
+function glyph(ch,x,y,sz,col,al,glow){cx.globalAlpha=al;cx.fillStyle=col;cx.font="bold "+sz.toFixed(1)+"px 'Courier New',monospace";if(glow){cx.shadowColor=col;cx.shadowBlur=glow}cx.fillText(ch,x,y);if(glow)cx.shadowBlur=0}
+function draw(now){if(!cv.isConnected)return;requestAnimationFrame(draw);
+ const t=rm?9:(now-t0)/1000,ox=W/2,oy=H*.44,an=t*.45,ca=Math.cos(an),sa=Math.sin(an),br=1+.045*Math.sin(t*2);
+ cx.globalAlpha=1;cx.fillStyle="#05070d";cx.fillRect(0,0,W,H);cx.textAlign="center";cx.textBaseline="middle";
+ const pr=(x,y,z)=>{x*=br;y*=br;z*=br;const xr=x*ca+z*sa,zr=-x*sa+z*ca,f=1/(1-zr*.3);return[ox+xr*S*f,oy+y*S*f,zr,f]};
+ for(const p of P){if(t<p.d)continue;const u=Math.min(1,(t-p.d)/p.du),[tx,ty,zr,f]=pr(p.x,p.y,p.z),gx=ox+p.sx*W,gy=oy+p.sy*H;
+  if(R()<.07)p.c[(R()*5)|0]=g();
+  if(u<1){/* cae como lluvia de Matrix y converge hacia su lugar en la nube */
+   for(let k=4;k>=0;k--){const uu=Math.max(0,u-k*.045),e=1-Math.pow(1-uu,3);
+    glyph(p.c[k],gx+(tx-gx)*e,gy+(ty-gy)*e,11,k?"#00ff6a":"#e6ffee",k?.55-k*.1:1,k?0:8)}}
+  else{const fl=.75+.25*Math.sin(t*3+p.ph);/* ya forma parte del átomo */
+   if(p.nuc)glyph(p.c[0],tx,ty,13*f,"#eafff0",.95,10);
+   else glyph(p.c[0],tx,ty,8+3*f,"#19ff7a",Math.max(.12,Math.min(.8,(.45+.4*zr)*fl)),0)}}
+ if(t>2.4){const al=Math.min(1,t-2.4);/* electrones orbitando */
+  E.forEach(e=>{for(let k=5;k>=0;k--){const a=e.a0+t*e.w-k*.12,x=Math.cos(a)*e.r,y0=Math.sin(a)*e.r,q=pr(x,y0*Math.cos(e.tl),y0*Math.sin(e.tl));
+   glyph(g(),q[0],q[1],14*q[3],"#3de6ff",al*(k?.5-k*.07:1),k?0:12)}})}
+ cx.globalAlpha=1}
+requestAnimationFrame(draw)})();
+</script>
+<script>
+(function(){const it=document.getElementById("intro");if(!it)return;const t0=performance.now(),MIN=3200;let ok=0;
  function fin(){if(ok)return;ok=1;const p=document.getElementById("introT");if(p)p.textContent="¡Listo!";setTimeout(()=>{it.classList.add("out");setTimeout(()=>it.remove(),800)},350)}
  function listo(){const v=document.querySelector("video");return !!(v&&v.videoWidth>0&&v.readyState>=2)}
  (function w(){const t=performance.now()-t0;if((listo()&&t>MIN)||t>10000)fin();else setTimeout(w,120)})()})();
@@ -138,13 +163,16 @@ for(const z in D){const m=document.getElementById("m"+z);
 /*LOGICA*/
 const CAPAS=(function(){
  const CATS=[["pro","Protones","#ff4d4d"],["neu","Neutrones","#9fb4c8"],["ele","Electrones","#3d9bff"],["niv","Niveles de energía","#e6ecff"],
-  ["s","Subniveles s","#ff8aa0"],["p","Subniveles p","#ffd84a"],["d","Subniveles d","#4dd98a"],["f","Subniveles f","#c08cff"]];
- const est={};CATS.forEach(c=>est[c[0]]=1);let atenuar=0;const DIM=.15;
- try{const g=JSON.parse(localStorage.getItem("capas")||"null");if(g){CATS.forEach(c=>{if(g.est&&c[0] in g.est)est[c[0]]=g.est[c[0]]?1:0});atenuar=g.atenuar?1:0}}catch(e){}
- const guardar=()=>{try{localStorage.setItem("capas",JSON.stringify({est,atenuar}))}catch(e){}};
+  ["s","Subniveles s","#ff8aa0"],["p","Subniveles p","#ffd84a"],["d","Subniveles d","#4dd98a"],["f","Subniveles f","#c08cff"]],NIVS=[1,2,3,4,5,6,7];
+ const est={},niv={};CATS.forEach(c=>est[c[0]]=1);NIVS.forEach(n=>niv[n]=1);let atenuar=0;const DIM=.15;
+ try{const g=JSON.parse(localStorage.getItem("capas")||"null");if(g){CATS.forEach(c=>{if(g.est&&c[0] in g.est)est[c[0]]=g.est[c[0]]?1:0});
+  NIVS.forEach(n=>{if(g.niv&&n in g.niv)niv[n]=g.niv[n]?1:0});atenuar=g.atenuar?1:0}}catch(e){}
+ const guardar=()=>{try{localStorage.setItem("capas",JSON.stringify({est,niv,atenuar}))}catch(e){}};
  function porNombre(n){n=n||"";let m;
   if(/^proton/i.test(n))return"pro";if(/^neutron/i.test(n))return"neu";if(/^electron/i.test(n))return"ele";if(/^nivel/i.test(n))return"niv";
   if(m=/^orbital_?\d+([spdf])/i.exec(n))return m[1].toLowerCase();return null}
+ /* nivel n según el nombre: Nivel_n2, Orbital_2p_0, Electron_n2_005 (sin nivel -> siempre visible) */
+ function nivelNombre(n){n=n||"";let m;if(m=/^nivel_?n?(\d+)/i.exec(n))return+m[1];if(m=/^orbital_?(\d+)[spdf]/i.exec(n))return+m[1];if(m=/^electron_?n(\d+)/i.exec(n))return+m[1];return null}
  const cl=(a,b)=>Math.abs(a-b)<.06;
  function porColor(m){const c=m&&m.color;if(!c)return null;const e=m.emissive&&(m.emissive.r+m.emissive.g+m.emissive.b)>.05;
   const is=(r,g,b)=>cl(c.r,r)&&cl(c.g,g)&&cl(c.b,b);
@@ -154,30 +182,42 @@ const CAPAS=(function(){
  const mats=o=>(Array.isArray(o.material)?o.material:[o.material]).filter(Boolean);
  function categoria(o){for(let x=o,i=0;x&&i<3;x=x.parent,i++){const k=porNombre(x.name);if(k)return k}
   for(const m of mats(o)){const k=porNombre(m.name)||porColor(m);if(k)return k}return null}
- function aplicarModelo(root){root.traverse(o=>{if(!o.isMesh)return;
-  if(o.userData.__cat===undefined)o.userData.__cat=categoria(o);const k=o.userData.__cat;if(!k)return;
-  const on=!!est[k],dim=!on&&atenuar;o.visible=on||!!atenuar;
-  for(const m of mats(o)){if(!m.userData.__c)m.userData.__c={op:m.opacity,tr:m.transparent,dw:m.depthWrite};const c=m.userData.__c;
+ function nivel(o){for(let x=o,i=0;x&&i<3;x=x.parent,i++){const k=nivelNombre(x.name);if(k!==null)return k}return null}
+ const guarda=m=>{if(!m.userData.__c)m.userData.__c={op:m.opacity,tr:m.transparent,dw:m.depthWrite};return m.userData.__c};
+ function aplicarModelo(root){root.traverse(o=>{if(!o.isMesh)return;const u=o.userData;
+  if(u.__cat===undefined){u.__cat=categoria(o);u.__niv=nivel(o)}const k=u.__cat;if(!k)return;
+  const on=!!est[k]&&(u.__niv==null||!!niv[u.__niv]),dim=!on&&atenuar;o.visible=on||!!atenuar;
+  /* los electrones comparten material: al atenuar cada objeto necesita el suyo */
+  if(dim&&!u.__cl){u.__cl=1;mats(o).forEach(guarda);const cp=m=>{const c=m.clone();c.userData.__c=m.userData.__c;return c};
+   o.material=Array.isArray(o.material)?o.material.map(cp):cp(o.material)}
+  for(const m of mats(o)){const c=guarda(m);
    const op=dim?c.op*DIM:c.op,tr=dim?true:c.tr,dw=dim?false:c.dw;
    if(m.opacity!==op||m.transparent!==tr||m.depthWrite!==dw){const t=m.transparent!==tr;m.opacity=op;m.transparent=tr;m.depthWrite=dw;if(t)m.needsUpdate=true}}})}
- return{CATS,est,get atenuar(){return atenuar},set atenuar(v){atenuar=v?1:0},guardar,categoria,aplicarModelo}})();
+ return{CATS,NIVS,est,niv,get atenuar(){return atenuar},set atenuar(v){atenuar=v?1:0},guardar,categoria,aplicarModelo}})();
 /*FIN LOGICA*/
 
-/* ---------- Capas: botones para mostrar, ocultar o atenuar partes del modelo ---------- */
+/* ---------- Capas: botones para mostrar, ocultar o atenuar partes del modelo, y selector de niveles ---------- */
 (function(){
  const raices=()=>[...document.querySelectorAll("[gltf-model]")].map(e=>e.object3D).filter(Boolean);
  const todo=()=>raices().forEach(CAPAS.aplicarModelo);
  const b=document.createElement("button");b.id="capb";b.textContent="Capas";b.setAttribute("aria-expanded","false");
  const p=document.createElement("div");p.id="capp";p.hidden=true;
- p.innerHTML='<div class="ch">Capas del átomo</div><div class="cg"></div><div class="cf"><button data-a="todo">Todo</button><button data-a="nada">Nada</button></div><label class="ca"><input type="checkbox" id="capt"> Atenuar en vez de ocultar</label>';
+ p.innerHTML='<div class="ch">Capas del átomo</div><div class="cg"></div><div class="cf"><button data-a="todo">Todo</button><button data-a="nada">Nada</button></div>'
+  +'<div class="ch sec">Niveles de energía (n)</div><div class="cn"></div><div class="cf cv"><button data-v="todo">Todos</button><button data-v="nada">Ninguno</button></div>'
+  +'<label class="ca"><input type="checkbox" id="capt"> Atenuar en vez de ocultar</label>';
  document.body.appendChild(b);document.body.appendChild(p);
- const g=p.querySelector(".cg"),ch={};
+ const g=p.querySelector(".cg"),gn=p.querySelector(".cn"),ch={},cn={};
  CAPAS.CATS.forEach(([k,n,col])=>{const x=document.createElement("button");x.className="chip";x.dataset.k=k;x.style.setProperty("--c",col);
   x.innerHTML="<i></i>"+n;g.appendChild(x);ch[k]=x;
   x.addEventListener("click",()=>{CAPAS.est[k]=CAPAS.est[k]?0:1;sync();todo()})});
+ CAPAS.NIVS.forEach(n=>{const x=document.createElement("button");x.textContent=n;x.setAttribute("aria-label","Nivel "+n);gn.appendChild(x);cn[n]=x;
+  x.addEventListener("click",()=>{CAPAS.niv[n]=CAPAS.niv[n]?0:1;sync();todo()})});
  const t=p.querySelector("#capt");
- function sync(){for(const k in ch){const on=!!CAPAS.est[k];ch[k].classList.toggle("on",on);ch[k].setAttribute("aria-pressed",on)}t.checked=!!CAPAS.atenuar;CAPAS.guardar()}
- p.querySelectorAll(".cf button").forEach(x=>x.addEventListener("click",()=>{const v=x.dataset.a=="todo"?1:0;for(const k in CAPAS.est)CAPAS.est[k]=v;sync();todo()}));
+ function sync(){for(const k in ch){const on=!!CAPAS.est[k];ch[k].classList.toggle("on",on);ch[k].setAttribute("aria-pressed",on)}
+  for(const n in cn){const on=!!CAPAS.niv[n];cn[n].classList.toggle("on",on);cn[n].setAttribute("aria-pressed",on)}
+  t.checked=!!CAPAS.atenuar;CAPAS.guardar()}
+ p.querySelectorAll(".cf:not(.cv) button").forEach(x=>x.addEventListener("click",()=>{const v=x.dataset.a=="todo"?1:0;for(const k in CAPAS.est)CAPAS.est[k]=v;sync();todo()}));
+ p.querySelectorAll(".cv button").forEach(x=>x.addEventListener("click",()=>{const v=x.dataset.v=="todo"?1:0;for(const n in CAPAS.niv)CAPAS.niv[n]=v;sync();todo()}));
  t.addEventListener("change",()=>{CAPAS.atenuar=t.checked;sync();todo()});
  b.addEventListener("click",()=>{p.hidden=!p.hidden;b.setAttribute("aria-expanded",!p.hidden);b.classList.toggle("on",!p.hidden)});
  sync();
