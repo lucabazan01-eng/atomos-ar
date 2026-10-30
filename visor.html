@@ -31,6 +31,19 @@
 @keyframes resp{from{opacity:.45}to{opacity:1}}
 @keyframes ent{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
 @media (prefers-reduced-motion:reduce){#intro .ex,#intro .ey,#intro .nu,#intro p,#intro .at{animation:none}}
+#capb{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));right:8px;z-index:15;padding:8px 14px;border-radius:20px;border:0;background:rgba(5,7,13,.7);color:#fff;font:15px system-ui,sans-serif;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+#capb.on{background:rgba(61,230,255,.28)}
+#capp{position:fixed;top:calc(52px + env(safe-area-inset-top,0px));right:8px;z-index:16;width:min(270px,86vw);padding:10px 10px 12px;border-radius:16px;background:rgba(8,12,24,.9);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#fff;font:14px system-ui,sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.45)}
+#capp[hidden]{display:none}
+#capp .ch{font-size:12px;letter-spacing:.5px;color:#9fb0d0;margin:0 2px 8px}
+#capp .cg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+#capp .chip{display:flex;align-items:center;gap:7px;padding:9px 8px;border-radius:12px;border:1.5px solid rgba(255,255,255,.18);background:transparent;color:#cfd8ee;font:13px system-ui,sans-serif;text-align:left;touch-action:manipulation;opacity:.5}
+#capp .chip i{flex:none;width:11px;height:11px;border-radius:50%;border:2px solid var(--c);background:transparent}
+#capp .chip.on{opacity:1;border-color:var(--c);color:#fff;background:rgba(255,255,255,.07)}
+#capp .chip.on i{background:var(--c);box-shadow:0 0 8px var(--c)}
+#capp .cf{display:flex;gap:6px;margin-top:8px}
+#capp .cf button{flex:1;padding:8px;border-radius:12px;border:0;background:rgba(255,255,255,.14);color:#fff;font:13px system-ui,sans-serif;touch-action:manipulation}
+#capp .ca{display:flex;align-items:center;gap:8px;margin:10px 2px 0;font-size:13px;color:#cfd8ee}
 </style></head>
 <body>
 <div id="intro" aria-hidden="true"><div class="at"><div class="o" style="--r:0deg;--c:#3de6ff;--t:0s"><b></b><div class="ex"><div class="ey"><i></i></div></div></div><div class="o" style="--r:60deg;--c:#ff4fc3;--t:-.4s"><b></b><div class="ex"><div class="ey"><i></i></div></div></div><div class="o" style="--r:120deg;--c:#ffd84a;--t:-.8s"><b></b><div class="ex"><div class="ey"><i></i></div></div></div><div class="nu"></div></div><p id="introT">Preparando la cámara…</p></div>
@@ -120,4 +133,56 @@ const t=document.getElementById("t"),s=document.getElementById("s");let cur=0;
 for(const z in D){const m=document.getElementById("m"+z);
  m.addEventListener("markerFound",()=>{cur=z;if(quiz){t.textContent=D[z][0]+" ("+D[z][1]+")";s.textContent="¿Cuántos electrones, protones y neutrones ves?"}else{t.textContent=D[z][0]+" ("+D[z][1]+") · "+z+" electrones";s.textContent=D[z][2]}});
  m.addEventListener("markerLost",()=>{if(cur==z){t.textContent="Apunta la cámara a un marcador";s.textContent="azul = electrones · núcleo: rojo = protones, celeste = neutrones"}})}
+</script>
+<script>
+/*LOGICA*/
+const CAPAS=(function(){
+ const CATS=[["pro","Protones","#ff4d4d"],["neu","Neutrones","#9fb4c8"],["ele","Electrones","#3d9bff"],["niv","Niveles de energía","#e6ecff"],
+  ["s","Subniveles s","#ff8aa0"],["p","Subniveles p","#ffd84a"],["d","Subniveles d","#4dd98a"],["f","Subniveles f","#c08cff"]];
+ const est={};CATS.forEach(c=>est[c[0]]=1);let atenuar=0;const DIM=.15;
+ try{const g=JSON.parse(localStorage.getItem("capas")||"null");if(g){CATS.forEach(c=>{if(g.est&&c[0] in g.est)est[c[0]]=g.est[c[0]]?1:0});atenuar=g.atenuar?1:0}}catch(e){}
+ const guardar=()=>{try{localStorage.setItem("capas",JSON.stringify({est,atenuar}))}catch(e){}};
+ function porNombre(n){n=n||"";let m;
+  if(/^proton/i.test(n))return"pro";if(/^neutron/i.test(n))return"neu";if(/^electron/i.test(n))return"ele";if(/^nivel/i.test(n))return"niv";
+  if(m=/^orbital_?\d+([spdf])/i.exec(n))return m[1].toLowerCase();return null}
+ const cl=(a,b)=>Math.abs(a-b)<.06;
+ function porColor(m){const c=m&&m.color;if(!c)return null;const e=m.emissive&&(m.emissive.r+m.emissive.g+m.emissive.b)>.05;
+  const is=(r,g,b)=>cl(c.r,r)&&cl(c.g,g)&&cl(c.b,b);
+  if(is(.1,.5,1))return"ele";if(is(.85,.12,.18))return"pro";if(is(.55,.75,.92))return"neu";if(e)return"niv";
+  if(m.transparent&&m.opacity<.5){if(is(.92,.25,.25))return"s";if(is(.97,.85,.2))return"p";if(is(.25,.72,.36))return"d";if(is(.76,.42,.92))return"f"}
+  return null}
+ const mats=o=>(Array.isArray(o.material)?o.material:[o.material]).filter(Boolean);
+ function categoria(o){for(let x=o,i=0;x&&i<3;x=x.parent,i++){const k=porNombre(x.name);if(k)return k}
+  for(const m of mats(o)){const k=porNombre(m.name)||porColor(m);if(k)return k}return null}
+ function aplicarModelo(root){root.traverse(o=>{if(!o.isMesh)return;
+  if(o.userData.__cat===undefined)o.userData.__cat=categoria(o);const k=o.userData.__cat;if(!k)return;
+  const on=!!est[k],dim=!on&&atenuar;o.visible=on||!!atenuar;
+  for(const m of mats(o)){if(!m.userData.__c)m.userData.__c={op:m.opacity,tr:m.transparent,dw:m.depthWrite};const c=m.userData.__c;
+   const op=dim?c.op*DIM:c.op,tr=dim?true:c.tr,dw=dim?false:c.dw;
+   if(m.opacity!==op||m.transparent!==tr||m.depthWrite!==dw){const t=m.transparent!==tr;m.opacity=op;m.transparent=tr;m.depthWrite=dw;if(t)m.needsUpdate=true}}})}
+ return{CATS,est,get atenuar(){return atenuar},set atenuar(v){atenuar=v?1:0},guardar,categoria,aplicarModelo}})();
+/*FIN LOGICA*/
+
+/* ---------- Capas: botones para mostrar, ocultar o atenuar partes del modelo ---------- */
+(function(){
+ const raices=()=>[...document.querySelectorAll("[gltf-model]")].map(e=>e.object3D).filter(Boolean);
+ const todo=()=>raices().forEach(CAPAS.aplicarModelo);
+ const b=document.createElement("button");b.id="capb";b.textContent="Capas";b.setAttribute("aria-expanded","false");
+ const p=document.createElement("div");p.id="capp";p.hidden=true;
+ p.innerHTML='<div class="ch">Capas del átomo</div><div class="cg"></div><div class="cf"><button data-a="todo">Todo</button><button data-a="nada">Nada</button></div><label class="ca"><input type="checkbox" id="capt"> Atenuar en vez de ocultar</label>';
+ document.body.appendChild(b);document.body.appendChild(p);
+ const g=p.querySelector(".cg"),ch={};
+ CAPAS.CATS.forEach(([k,n,col])=>{const x=document.createElement("button");x.className="chip";x.dataset.k=k;x.style.setProperty("--c",col);
+  x.innerHTML="<i></i>"+n;g.appendChild(x);ch[k]=x;
+  x.addEventListener("click",()=>{CAPAS.est[k]=CAPAS.est[k]?0:1;sync();todo()})});
+ const t=p.querySelector("#capt");
+ function sync(){for(const k in ch){const on=!!CAPAS.est[k];ch[k].classList.toggle("on",on);ch[k].setAttribute("aria-pressed",on)}t.checked=!!CAPAS.atenuar;CAPAS.guardar()}
+ p.querySelectorAll(".cf button").forEach(x=>x.addEventListener("click",()=>{const v=x.dataset.a=="todo"?1:0;for(const k in CAPAS.est)CAPAS.est[k]=v;sync();todo()}));
+ t.addEventListener("change",()=>{CAPAS.atenuar=t.checked;sync();todo()});
+ b.addEventListener("click",()=>{p.hidden=!p.hidden;b.setAttribute("aria-expanded",!p.hidden);b.classList.toggle("on",!p.hidden)});
+ sync();
+ document.addEventListener("model-loaded",e=>{const o=e.target&&e.target.object3D;if(o)CAPAS.aplicarModelo(o)});
+ document.querySelectorAll("a-marker").forEach(m=>m.addEventListener("markerFound",()=>{const e=m.querySelector("[gltf-model]");if(e&&e.object3D)CAPAS.aplicarModelo(e.object3D)}));
+ setTimeout(todo,2500);setTimeout(todo,6000);
+})();
 </script></body></html>
